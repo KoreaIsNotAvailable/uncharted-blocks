@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "언차티드 블록 - 엔트리 비공식 블록",
+  "version": "1.0.0",
+  "description": "엔트리(playentry.org)에서 흑백/반전/모자이크/클리핑/웹사이트 생성 등 비공식 블록을 자동으로 등록합니다. 저장/로드된 작품에서도 계속 작동합니다.",
+  "content_scripts": [
+    {
+      "matches": ["https://playentry.org/*"],
+      "js": ["inject.js"],
+      "run_at": "document_start",
+      "world": "MAIN",
+      "all_frames": true
+    },
+    {
+      "matches": ["https://playentry.org/*"],
+      "js": ["bridge.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "언차티드 블록"
+  },
+  "permissions": ["scripting", "activeTab", "storage"]
+}
