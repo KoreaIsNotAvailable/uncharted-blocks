@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<style>
+  body {
+    width: 240px;
+    font-family: -apple-system, "Malgun Gothic", sans-serif;
+    padding: 14px;
+    background: #1e1e2e;
+    color: #eee;
+  }
+  h1 {
+    font-size: 14px;
+    margin: 0 0 10px;
+    color: #3498DB;
+  }
+  p {
+    font-size: 12px;
+    line-height: 1.5;
+    color: #bbb;
+    margin: 0 0 12px;
+  }
+  button {
+    width: 100%;
+    padding: 8px;
+    background: #3498DB;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  button:hover { background: #2874A6; }
+  #status {
+    margin-top: 10px;
+    font-size: 12px;
+    color: #2ecc71;
+    min-height: 16px;
+  }
+  hr { border: none; border-top: 1px solid #333; margin: 14px 0; }
+  h2 {
+    font-size: 13px;
+    margin: 0 0 8px;
+    color: #eee;
+  }
+  input, textarea {
+    width: 100%;
+    box-sizing: border-box;
+    background: #2a2a3d;
+    border: 1px solid #444;
+    color: #eee;
+    border-radius: 4px;
+    padding: 6px;
+    font-size: 12px;
+    margin-bottom: 6px;
+    font-family: inherit;
+  }
+  textarea { resize: vertical; }
+  #addSnippetBtn {
+    background: #8E44AD;
+    margin-bottom: 10px;
+  }
+  #addSnippetBtn:hover { background: #6C3483; }
+  #snippetList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 140px;
+    overflow-y: auto;
+  }
+  #snippetList li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #2a2a3d;
+    padding: 6px 8px;
+    border-radius: 4px;
+    margin-bottom: 4px;
+    font-size: 12px;
+  }
+  #snippetList button {
+    width: auto;
+    padding: 3px 8px;
+    background: #c0392b;
+    font-size: 11px;
+  }
+  #snippetList button:hover { background: #922b21; }
+  #snippetEmpty {
+    font-size: 11px;
+    color: #777;
+  }
+  a.linkBtn {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    font-size: 12px;
+    color: #00A86B;
+    border: 1px solid #00A86B;
+    border-radius: 6px;
+    padding: 6px;
+    margin-bottom: 8px;
+  }
+  a.linkBtn:hover { background: #00A86B22; }
+  #aiKeyStatus {
+    font-size: 12px;
+    margin-bottom: 8px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    background: #2a2a3d;
+  }
+  #aiKeyStatus.set { color: #2ecc71; }
+  #aiKeyStatus.unset { color: #999; }
+  #aiKeyRow { display: flex; gap: 6px; }
+  #aiKeyRow input { margin-bottom: 0; flex: 1; }
+  #aiKeySaveBtn, #aiKeyClearBtn {
+    width: auto;
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  #aiKeyClearBtn { background: #7f8c8d; }
+  #aiKeyClearBtn:hover { background: #616a6b; }
+  #sharedKeyStatus {
+    font-size: 12px;
+    margin-bottom: 8px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    background: #2a2a3d;
+  }
+  #sharedKeyStatus.set { color: #2ecc71; }
+  #sharedKeyStatus.unset { color: #999; }
+  #sharedKeyRow { display: flex; gap: 6px; }
+  #sharedKeyRow input { margin-bottom: 0; flex: 1; }
+  #sharedKeySaveBtn, #sharedKeyClearBtn {
+    width: auto;
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  #sharedKeyClearBtn { background: #7f8c8d; width: 100%; }
+  #sharedKeyClearBtn:hover { background: #616a6b; }
+  #updateStatus {
+    font-size: 12px;
+    margin-top: 8px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    background: #2a2a3d;
+  }
+  #updateStatus.uptodate { color: #2ecc71; }
+  #updateStatus.available { color: #f39c12; }
+  #updateStatus.error { color: #e74c3c; }
+  #updateStatus a { color: #3498DB; }
+</style>
+</head>
+<body>
+  <h1>🧭 언차티드 블록</h1>
+  <p>엔트리 편집 화면에서 블록이 안 보이거나, 씬 전환 후 팔레트가 초기화됐을 때 눌러주세요.</p>
+  <button id="reapplyBtn">다시 등록하기</button>
+  <div id="status"></div>
+
+  <hr />
+  <h2>🔄 업데이트 확인</h2>
+  <p style="margin-top:-4px;">최신 버전이 있는지 GitHub에서 확인만 합니다. 자동으로 코드를 받아 실행하지 않으며, 실제 업데이트는 항상 직접 다운로드해서 적용해야 합니다.</p>
+  <button id="checkUpdateBtn">업데이트 확인</button>
+  <div id="updateStatus"></div>
+
+  <hr />
+  <h2>🤖 생성형 AI (Groq)</h2>
+  <a class="linkBtn" href="https://console.groq.com/keys" target="_blank" rel="noopener">Groq에서 무료 API 키 발급받기 ↗</a>
+  <div id="aiKeyStatus" class="unset">키가 설정되지 않았습니다.</div>
+  <div id="aiKeyRow">
+    <input id="aiKeyInput" type="password" placeholder="gsk_..." />
+    <button id="aiKeySaveBtn">저장</button>
+  </div>
+  <button id="aiKeyClearBtn" style="width:100%;margin-top:6px;">키 삭제</button>
+
+  <hr />
+  <h2>🔗 이 작품용 공유 키 설정</h2>
+  <p style="margin-top:-4px;">
+    지금 열려있는 작품에 Groq 키를 함께 저장해서, 자기 키가 없는 다른 사람도 이 작품의 AI 블록을 쓸 수 있게 합니다.
+  </p>
+  <p style="margin-top:-4px; color:#e67e22;">
+    ⚠️ 주의: 이 키는 작품 데이터 자체에 저장됩니다. 작품을 저장·공유·게시하면 <b>이 키도 함께 노출될 수 있으며 완전히 숨겨지지 않습니다</b>(프로젝트 파일을 직접 열어보면 드러날 수 있음). 유출되어도 괜찮은 키만 등록하세요.
+  </p>
+  <div id="sharedKeyStatus" class="unset">이 작품에 공유 키가 설정되지 않았습니다.</div>
+  <div id="sharedKeyRow">
+    <input id="sharedKeyInput" type="password" placeholder="gsk_..." />
+    <button id="sharedKeySaveBtn">설정</button>
+  </div>
+  <button id="sharedKeyClearBtn" style="width:100%;margin-top:6px;">공유 키 삭제</button>
+
+  <hr />
+  <h2>📌 내 커스텀 코드</h2>
+  <p style="margin-top:-4px;">여기에 저장한 코드는 엔트리 페이지를 열 때마다 자동으로 실행돼요.</p>
+  <input id="snippetTitle" placeholder="제목 (예: 반짝이는 효과)" />
+  <textarea id="snippetCode" rows="4" placeholder="여기에 콘솔에 붙여넣던 코드를 그대로 넣으세요"></textarea>
+  <button id="addSnippetBtn">저장하고 추가하기</button>
+  <ul id="snippetList"></ul>
+  <div id="snippetEmpty">저장된 커스텀 코드가 없어요.</div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
